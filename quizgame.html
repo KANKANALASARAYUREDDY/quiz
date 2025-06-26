@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .quiz-container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      width: 400px;
+      max-width: 90%;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .option-btn {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      background-color: #f1f1f1;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    .option-btn:hover {
+      background-color: #ddd;
+    }
+    #next-btn {
+      margin-top: 20px;
+      padding: 10px;
+      width: 100%;
+      background-color: #4facfe;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      display: none;
+    }
+    #next-btn:hover {
+      background-color: #00c3ff;
+    }
+    .score {
+      font-size: 20px;
+      font-weight: bold;
+      color: green;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h2 id="question">Loading question...</h2>
+    <div id="options">
+      <!-- Options will be generated here -->
+    </div>
+    <button id="next-btn">Next</button>
+    <div id="score" class="score"></div>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Earth", "Mars", "Jupiter", "Saturn"],
+        answer: "Mars"
+      },
+      {
+        question: "What is the capital of France?",
+        options: ["Rome", "Berlin", "Paris", "Madrid"],
+        answer: "Paris"
+      },
+      {
+        question: "Which language runs in a web browser?",
+        options: ["Java", "C", "Python", "JavaScript"],
+        answer: "JavaScript"
+      },
+      {
+        question: "Who painted the Mona Lisa?",
+        options: ["Vincent Van Gogh", "Leonardo da Vinci", "Pablo Picasso", "Michelangelo"],
+        answer: "Leonardo da Vinci"
+      }
+    ];
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const nextBtn = document.getElementById("next-btn");
+    const scoreEl = document.getElementById("score");
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      resetState();
+      const q = quizData[currentQuestion];
+      questionEl.textContent = `Q${currentQuestion + 1}: ${q.question}`;
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.textContent = option;
+        btn.classList.add("option-btn");
+        btn.addEventListener("click", () => selectAnswer(btn, q.answer));
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(selectedBtn, correctAnswer) {
+      const allOptions = document.querySelectorAll(".option-btn");
+      allOptions.forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === correctAnswer) {
+          btn.style.backgroundColor = "#a0e6a0"; // green
+        } else {
+          btn.style.backgroundColor = "#f6b6b6"; // red
+        }
+      });
+      if (selectedBtn.textContent === correctAnswer) {
+        score++;
+      }
+      nextBtn.style.display = "block";
+    }
+
+    function resetState() {
+      nextBtn.style.display = "none";
+      optionsEl.innerHTML = "";
+      scoreEl.textContent = "";
+    }
+
+    nextBtn.addEventListener("click", () => {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        showScore();
+      }
+    });
+
+    function showScore() {
+      resetState();
+      questionEl.textContent = "Quiz Completed!";
+      scoreEl.textContent = `Your Score: ${score} / ${quizData.length}`;
+      nextBtn.textContent = "Play Again";
+      nextBtn.style.display = "block";
+      nextBtn.onclick = () => location.reload();
+    }
+
+    // Initial call
+    loadQuestion();
+  </script>
+</body>
+</html>
